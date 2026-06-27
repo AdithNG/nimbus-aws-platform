@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Campaign {
+  id                 String   @id @default(cuid())
+  name               String
+  subject            String
+  fromName           String
+  fromEmail          String
+  status             String   @default("draft") // draft | scheduled | sending | sent | paused
+  audience           String   @default("All Subscribers")
+  recipientCount     Int      @default(0)
+  sentCount          Int      @default(0)
+  deliveredCount     Int      @default(0)
+  bounceCount        Int      @default(0)
+  openCount          Int      @default(0)
+  clickCount         Int      @default(0)
+  unsubscribeCount   Int      @default(0)
+  complaintCount     Int      @default(0)
+  htmlContent        String?
+  scheduledAt        DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  events             EmailEvent[]
+}
+
+model EmailEvent {
+  id          String   @id @default(cuid())
+  campaignId  String
+  type        String   // sent | delivered | bounce | open | click | unsubscribe | complaint
+  recipient   String
+  detail      String?
+  timestamp   DateTime @default(now())
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId, type])
+  @@index([timestamp])
+}
+
+model AuditScan {
+  id            String   @id @default(cuid())
+  status        String   @default("running") // running | completed | failed
+  accountsScanned Int    @default(1)
+  resourcesScanned Int   @default(0)
+  findingsCount Int      @default(0)
+  criticalCount Int      @default(0)
+  highCount     Int      @default(0)
+  mediumCount   Int      @default(0)
+  lowCount      Int      @default(0)
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  findings      AuditFinding[]
+}
+
+model AuditFinding {
+  id          String   @id @default(cuid())
+  scanId      String
+  category    String   // iam | s3 | ses | ec2 | cloudtrail | general
+  severity    String   // critical | high | medium | low | info
+  title       String
+  description String
+  resource    String
+  region      String?
+  remediation String
+  status      String   @default("open") // open | resolved | dismissed
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  scan        AuditScan @relation(fields: [scanId], references: [id], onDelete: Cascade)
+
+  @@index([scanId])
+  @@index([severity])
+  @@index([status])
+}
+
+model AwsSetting {
+  id                 String   @id @default("singleton")
+  region             String   @default("us-east-1")
+  accountAlias       String   @default("production")
+  accessKeyMasked    String?
+  sesVerifiedDomain  String?
+  sesSendingEnabled  Boolean  @default(false)
+  dailySendingLimit  Int      @default(50000)
+  dailyUsed          Int      @default(0)
+  connected          Boolean  @default(false)
+  lastSyncAt         DateTime?
+  updatedAt          DateTime @updatedAt
+}
