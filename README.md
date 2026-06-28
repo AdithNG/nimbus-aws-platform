@@ -68,10 +68,13 @@ All screenshots are committed under [`/screenshots`](./screenshots):
 
 | File | View |
 |------|------|
-| `dashboard-final.png` | Operations dashboard (KPIs + 14-day volume chart + event breakdown + recent campaigns + security posture) |
-| `analytics.png` | Cross-campaign analytics (delivery trend + event distribution + comparison table) |
+| `dashboard.png` | Operations dashboard (KPIs + 14-day volume chart + event breakdown + recent campaigns + security posture) |
+| `campaigns.png` | Campaigns list (filter tabs, search, status badges, per-row send/delete actions) |
 | `campaign-detail.png` | Per-campaign detail drawer (engagement chart + funnel + top links + event stream) |
-| `mobile.png` | Mobile layout (390px) |
+| `analytics.png` | Cross-campaign analytics (delivery trend + event distribution + comparison table) |
+| `security-audit.png` | Security audit (scan summary, filtered findings list, scan history) |
+| `settings.png` | AWS settings (connection status, region/key/SES-domain form, quota meter) |
+| `mobile-dashboard.png` | Mobile layout (390px) — dashboard |
 | `mobile-nav.png` | Mobile navigation drawer |
 
 ---
